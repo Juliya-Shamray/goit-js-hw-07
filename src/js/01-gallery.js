@@ -4,8 +4,6 @@ const list = document.querySelector('.gallery');
 
 list.addEventListener('click', onClick);
 
-document.addEventListener('keydown', onEscape);
-
 const gallery = galleryItems
   .map(
     item =>
@@ -22,11 +20,18 @@ function onClick(event) {
     return;
   }
 
-  instance = basicLightbox.create(
-    ` <img src="${event.target.dataset.source}" alt="${event.target.alt}">`
-  );
-
-  instance.show();
+  (instance = basicLightbox.create(
+    ` <img src="${event.target.dataset.source}" alt="${event.target.alt}">`,
+    {
+      onShow() {
+        document.addEventListener('keydown', onEscape);
+      },
+      onClose() {
+        document.removeEventListener('keydown', onEscape);
+      },
+    }
+  )),
+    instance.show();
 }
 
 function onEscape(event) {
